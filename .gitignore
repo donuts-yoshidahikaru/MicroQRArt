@@ -1,0 +1,82 @@
+######################
+# General
+######################
+.DS_Store
+*.swp
+*~.nib
+*.lock
+
+######################
+# Xcode
+######################
+
+## User Interface State
+xcuserdata/
+*.xcuserdatad/
+*.xcuserstate
+
+## Build generated
+build/
+DerivedData/
+
+## Generated Master Source Code
+*/*.generated.swift
+
+## Swift Package Manager
+#
+# Add this line if you want to ignore the dependencies resolved by
+# Swift Package Manager
+# https://github.com/swiftlang/swift-package-manager
+Packages/
+.swiftpm/
+*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/configuration/
+
+# Carthage
+#
+# Add this line if you want to ignore the dependencies resolved by
+# Carthage
+# https://github.com/Carthage/Carthage
+# Carthage/
+
+# CocoaPods
+#
+# Add this line if you want to ignore the dependencies resolved by
+# CocoaPods
+# https://cocoapods.org/
+# Pods/
+
+######################
+# Project Specific #
+######################
+# MySecretFile.swift
+# /MicroQRArt/Generated/
+
+######################
+# macOS
+######################
+*.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+######################
+# Testing
+######################
+*.xctestrun
