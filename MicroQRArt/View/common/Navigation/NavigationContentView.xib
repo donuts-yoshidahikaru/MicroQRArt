@@ -21,6 +21,9 @@
                         <imageReference key="image" image="paintbrush.pointed" catalog="system" symbolScale="large"/>
                         <color key="baseForegroundColor" red="0.63137254899999995" green="0.76078431369999999" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </buttonConfiguration>
+                    <connections>
+                        <action selector="decorationButtonTapped:" destination="-1" eventType="touchUpInside" id="CyG-HE-r2I"/>
+                    </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0FF-kX-tQ6" userLabel="homeButton">
                     <rect key="frame" x="172" y="8" width="49" height="56"/>
@@ -30,6 +33,9 @@
                         <imageReference key="image" image="house" catalog="system" symbolScale="large"/>
                         <color key="baseForegroundColor" red="0.63137254899999995" green="0.76078431369999999" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </buttonConfiguration>
+                    <connections>
+                        <action selector="homeButtonTapped:" destination="-1" eventType="touchUpInside" id="MlH-w5-gMO"/>
+                    </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hp9-lt-xLB" userLabel="profileButton">
                     <rect key="frame" x="301" y="8" width="49" height="56"/>
@@ -39,6 +45,9 @@
                         <imageReference key="image" image="person" catalog="system" symbolScale="large"/>
                         <color key="baseForegroundColor" red="0.63137254899999995" green="0.76078431369999999" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </buttonConfiguration>
+                    <connections>
+                        <action selector="profileButtonTapped:" destination="-1" eventType="touchUpInside" id="wnA-jf-fpp"/>
+                    </connections>
                 </button>
             </subviews>
             <color key="backgroundColor" red="0.0" green="0.46000000000000002" blue="0.89000000000000001" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>

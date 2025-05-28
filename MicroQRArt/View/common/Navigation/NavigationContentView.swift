@@ -7,7 +7,13 @@
 
 import UIKit
 
+protocol NavigationContentViewDelegate: AnyObject {
+    func navigationContentView(_ view: NavigationContentView, didTap type: ParentViewControllerType)
+}
+
 final class NavigationContentView: UIView {
+    weak var delegate: NavigationContentViewDelegate?
+
     override init(frame: CGRect) {
         super.init(frame: frame)
 
@@ -19,5 +25,18 @@ final class NavigationContentView: UIView {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+// MARK: - IBAction
+private extension NavigationContentView {
+    @IBAction func homeButtonTapped(_ sender: UIButton) {
+        delegate?.navigationContentView(self, didTap: .home)
+    }
+    @IBAction func profileButtonTapped(_ sender: UIButton) {
+        delegate?.navigationContentView(self, didTap: .profile)
+    }
+    @IBAction func decorationButtonTapped(_ sender: UIButton) {
+        delegate?.navigationContentView(self, didTap: .decoration)
     }
 }
