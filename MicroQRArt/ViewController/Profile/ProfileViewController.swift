@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ProfileViewController: UIViewController {
+final class ProfileViewController: ParentViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .green
