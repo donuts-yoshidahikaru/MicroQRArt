@@ -8,7 +8,7 @@
 import UIKit
 
 final class NavigationView: UIView {
-    private let contentView = NavigationContentView()
+    public let contentView = NavigationContentView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
