@@ -12,12 +12,20 @@ protocol RootViewModelProtocol {
     var navigationState: CurrentValueSubject<NavigationState, Never> { get }
     var shouldTransition: PassthroughSubject<(from: Int, to: Int, direction: UIPageViewController.NavigationDirection), Never> { get }
     
+    var navigationButtonStates: AnyPublisher<[NavigationButtonState], Never> { get }
+    
     func didTapNavigation(_ type: RootViewControllerType)
 }
 
 final class RootViewModel: RootViewModelProtocol {
     let navigationState = CurrentValueSubject<NavigationState, Never>(NavigationState())
     let shouldTransition = PassthroughSubject<(from: Int, to: Int, direction: UIPageViewController.NavigationDirection), Never>()
+    
+    var navigationButtonStates: AnyPublisher<[NavigationButtonState], Never> {
+        return navigationState
+            .map { $0.buttonStates }
+            .eraseToAnyPublisher()
+    }
     
     func didTapNavigation(_ type: RootViewControllerType) {
         guard let newIndex = type.index else { return }
