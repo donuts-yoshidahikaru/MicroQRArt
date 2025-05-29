@@ -58,9 +58,7 @@ final class RootViewController: UIViewController {
     private func setupBindings() {
         // ナビゲーション状態の監視
         viewModel.navigationState
-            .sink { [weak self] state in
-                self?.updateNavigationUI(for: state)
-            }
+            .sink { state in }
             .store(in: &cancellables)
 
         // ナビゲーションボタンの状態監視
@@ -69,7 +67,7 @@ final class RootViewController: UIViewController {
                 self?.navView.contentView.configure(with: buttonStates)
             }
             .store(in: &cancellables)
-
+            
         // 画面遷移の実行
         viewModel.shouldTransition
             .sink { [weak self] transition in
@@ -113,6 +111,7 @@ final class RootViewController: UIViewController {
         ])
     }
     
+    // MARK: - Private Methods
     private func performTransition(from oldIndex: Int, to newIndex: Int, direction: UIPageViewController.NavigationDirection) {
         pageVC.setViewControllers(
             [viewControllers[newIndex]],
