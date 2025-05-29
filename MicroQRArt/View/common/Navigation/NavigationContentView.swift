@@ -8,7 +8,7 @@
 import UIKit
 
 protocol NavigationContentViewDelegate: AnyObject {
-    func navigationContentView(_ view: NavigationContentView, didTap type: ParentViewControllerType)
+    func navigationContentView(_ view: NavigationContentView, didTap type: RootViewControllerType)
 }
 
 final class NavigationContentView: UIView {
