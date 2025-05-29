@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class DecorationViewController: ParentViewController {
+final class DecorationViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .blue
