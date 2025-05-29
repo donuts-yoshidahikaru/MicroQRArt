@@ -9,14 +9,22 @@ enum RootViewControllerType {
     case decoration
     case home
     case profile
+} 
 
-    var index: Int? {
-        get {
-            switch self {
-            case .decoration: return 0
-            case .home: return 1
-            case .profile: return 2
-            }
+extension RootViewControllerType {
+    var iconName: String {
+        switch self {
+        case .decoration: return "paintbrush.pointed"
+        case .home: return "house"
+        case .profile: return "person"
         }
     }
-} 
+    
+    var index: Int? {
+        switch self {
+        case .decoration: return 0
+        case .home: return 1
+        case .profile: return 2
+        }
+    }
+}
