@@ -62,7 +62,14 @@ final class RootViewController: UIViewController {
                 self?.updateNavigationUI(for: state)
             }
             .store(in: &cancellables)
-        
+
+        // ナビゲーションボタンの状態監視
+        viewModel.navigationButtonStates
+            .sink { [weak self] buttonStates in
+                self?.navView.contentView.configure(with: buttonStates)
+            }
+            .store(in: &cancellables)
+
         // 画面遷移の実行
         viewModel.shouldTransition
             .sink { [weak self] transition in
@@ -104,11 +111,6 @@ final class RootViewController: UIViewController {
             pageVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             pageVC.view.bottomAnchor.constraint(equalTo: navView.topAnchor)
         ])
-    }
-    
-    // MARK: - Private Methods
-    private func updateNavigationUI(for state: NavigationState) {
-        // ナビゲーションバーの状態更新などがあれば実装
     }
     
     private func performTransition(from oldIndex: Int, to newIndex: Int, direction: UIPageViewController.NavigationDirection) {
