@@ -6,7 +6,7 @@
 //
 
 struct PageControllerState {
-    let currentIndex: Int?
+    let currentIndex: Int
     let availableTabs: [RootViewControllerType]
     
     init(currentIndex: Int = 1, availableTabs: [RootViewControllerType] = [.decoration, .home, .profile]) {

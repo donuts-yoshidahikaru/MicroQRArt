@@ -81,7 +81,7 @@ final class RootViewController: UIViewController {
     }
     
     private func setupInitialState() {
-        guard let initialIndex = viewModel.pageControllerState.value.currentIndex else { return }
+        let initialIndex = viewModel.pageControllerState.value.currentIndex
         pageVC.setViewControllers(
             [viewControllers[initialIndex]],
             direction: .forward,
