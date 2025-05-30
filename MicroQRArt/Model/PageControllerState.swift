@@ -1,11 +1,11 @@
 //
-//  NavigationState.swift
+//  PageControllerState.swift
 //  MicroQRArt
 //
 //  Created by yoshida.hikaru on 2025/05/29.
 //
 
-struct NavigationState {
+struct PageControllerState {
     let currentIndex: Int?
     let availableTabs: [RootViewControllerType]
     
@@ -14,14 +14,14 @@ struct NavigationState {
         self.availableTabs = availableTabs
     }
     
-    func updated(currentIndex: Int) -> NavigationState {
-        return NavigationState(currentIndex: currentIndex, availableTabs: availableTabs)
+    func updated(currentIndex: Int) -> PageControllerState {
+        return PageControllerState(currentIndex: currentIndex, availableTabs: availableTabs)
     }
 
-    var buttonStates: [NavigationButtonState] {
+    var buttonStates: [PageControllerButtonState] {
         return availableTabs.map { type in
             let isSelected = (type.index == currentIndex)
-            return NavigationButtonState(
+            return PageControllerButtonState(
                 type: type,
                 iconName: type.iconName,
                 isSelected: isSelected

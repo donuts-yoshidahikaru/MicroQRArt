@@ -9,32 +9,32 @@ import UIKit
 import Combine
 
 protocol RootViewModelProtocol {
-    var navigationState: CurrentValueSubject<NavigationState, Never> { get }
+    var pageControllerState: CurrentValueSubject<PageControllerState, Never> { get }
     var shouldTransition: PassthroughSubject<(from: Int, to: Int, direction: UIPageViewController.NavigationDirection), Never> { get }
     
-    var navigationButtonStates: AnyPublisher<[NavigationButtonState], Never> { get }
+    var pageControllerButtonStates: AnyPublisher<[PageControllerButtonState], Never> { get }
     
-    func didTapNavigation(_ type: RootViewControllerType)
+    func didTapPageController(_ type: RootViewControllerType)
 }
 
 final class RootViewModel: RootViewModelProtocol {
-    let navigationState = CurrentValueSubject<NavigationState, Never>(NavigationState())
+    let pageControllerState = CurrentValueSubject<PageControllerState, Never>(PageControllerState())
     let shouldTransition = PassthroughSubject<(from: Int, to: Int, direction: UIPageViewController.NavigationDirection), Never>()
     
-    var navigationButtonStates: AnyPublisher<[NavigationButtonState], Never> {
-        return navigationState
+    var pageControllerButtonStates: AnyPublisher<[PageControllerButtonState], Never> {
+        return pageControllerState
             .map { $0.buttonStates }
             .eraseToAnyPublisher()
     }
     
-    func didTapNavigation(_ type: RootViewControllerType) {
+    func didTapPageController(_ type: RootViewControllerType) {
         guard let newIndex = type.index else { return }
-        guard let currentIndex = navigationState.value.currentIndex, newIndex != currentIndex else { return }
+        guard let currentIndex = pageControllerState.value.currentIndex, newIndex != currentIndex else { return }
         
         let direction: UIPageViewController.NavigationDirection = newIndex > currentIndex ? .forward : .reverse
         
         // 状態更新
-        navigationState.send(navigationState.value.updated(currentIndex: newIndex))
+        pageControllerState.send(pageControllerState.value.updated(currentIndex: newIndex))
         
         // 画面遷移トリガー
         shouldTransition.send((from: currentIndex, to: newIndex, direction: direction))

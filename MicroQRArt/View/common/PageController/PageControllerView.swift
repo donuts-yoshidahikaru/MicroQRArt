@@ -1,5 +1,5 @@
 //
-//  NavigationView.swift
+//  PageControllerView.swift
 //  MicroQRArt
 //
 //  Created by yoshida.hikaru on 2025/05/28.
@@ -7,8 +7,8 @@
 
 import UIKit
 
-final class NavigationView: UIView {
-    public let contentView = NavigationContentView()
+final class PageControllerView: UIView {
+    public let contentView = PageControllerContentView()
     private let fixedHeight: CGFloat = 73
 
     override init(frame: CGRect) {

@@ -10,7 +10,7 @@ import Combine
 
 final class RootViewController: UIViewController {
     // MARK: - UI Components
-    private let navView = NavigationView()
+    private let pageControllerView = PageControllerView()
     private let pageVC = UIPageViewController(
         transitionStyle: .scroll,
         navigationOrientation: .horizontal,
@@ -50,21 +50,21 @@ final class RootViewController: UIViewController {
     
     // MARK: - Setup Methods
     private func setupUI() {
-        navView.contentView.delegate = self
+        pageControllerView.contentView.delegate = self
         view.backgroundColor = .background
         layout()
     }
     
     private func setupBindings() {
         // ナビゲーション状態の監視
-        viewModel.navigationState
+        viewModel.pageControllerState
             .sink { state in }
             .store(in: &cancellables)
 
         // ナビゲーションボタンの状態監視
-        viewModel.navigationButtonStates
+        viewModel.pageControllerButtonStates
             .sink { [weak self] buttonStates in
-                self?.navView.contentView.configure(with: buttonStates)
+                self?.pageControllerView.contentView.configure(with: buttonStates)
             }
             .store(in: &cancellables)
             
@@ -81,7 +81,7 @@ final class RootViewController: UIViewController {
     }
     
     private func setupInitialState() {
-        guard let initialIndex = viewModel.navigationState.value.currentIndex else { return }
+        guard let initialIndex = viewModel.pageControllerState.value.currentIndex else { return }
         pageVC.setViewControllers(
             [viewControllers[initialIndex]],
             direction: .forward,
@@ -93,21 +93,21 @@ final class RootViewController: UIViewController {
     private func layout() {
         addChild(pageVC)
         view.addSubview(pageVC.view)
-        view.addSubview(navView)
+        view.addSubview(pageControllerView)
         pageVC.didMove(toParent: self)
         
-        navView.translatesAutoresizingMaskIntoConstraints = false
+        pageControllerView.translatesAutoresizingMaskIntoConstraints = false
         pageVC.view.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            navView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            navView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            navView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            pageControllerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            pageControllerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            pageControllerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             pageVC.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             pageVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             pageVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            pageVC.view.bottomAnchor.constraint(equalTo: navView.topAnchor)
+            pageVC.view.bottomAnchor.constraint(equalTo: pageControllerView.topAnchor)
         ])
     }
     
@@ -122,8 +122,8 @@ final class RootViewController: UIViewController {
 }
 
 // MARK: - NavigationContentViewDelegate
-extension RootViewController: NavigationContentViewDelegate {
-    func navigationContentView(_ view: NavigationContentView, didTap type: RootViewControllerType) {
-        viewModel.didTapNavigation(type)
+extension RootViewController: PageControllerContentViewDelegate {
+    func PageControllerContentView(_ view: PageControllerContentView, didTap type: RootViewControllerType) {
+        viewModel.didTapPageController(type)
     }
 }
