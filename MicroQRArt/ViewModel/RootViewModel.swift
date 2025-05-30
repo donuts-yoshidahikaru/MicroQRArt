@@ -28,7 +28,7 @@ final class RootViewModel: RootViewModelProtocol {
     }
     
     func didTapPageController(_ type: RootViewControllerType) {
-        guard let newIndex = type.index else { return }
+        let newIndex = type.rawValue
         guard let currentIndex = pageControllerState.value.currentIndex, newIndex != currentIndex else { return }
         
         let direction: UIPageViewController.NavigationDirection = newIndex > currentIndex ? .forward : .reverse

@@ -20,7 +20,7 @@ struct PageControllerState {
 
     var buttonStates: [PageControllerButtonState] {
         return availableTabs.map { type in
-            let isSelected = (type.index == currentIndex)
+            let isSelected = (type.rawValue == currentIndex)
             return PageControllerButtonState(
                 type: type,
                 iconName: type.iconName,
@@ -30,6 +30,6 @@ struct PageControllerState {
     }
     
     var currentTabType: RootViewControllerType? {
-        return availableTabs.first { $0.index == currentIndex }
+        return availableTabs.first { $0.rawValue == currentIndex }
     }
 }
