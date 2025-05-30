@@ -81,9 +81,8 @@ final class RootViewController: UIViewController {
     }
     
     private func setupInitialState() {
-        let initialIndex = viewModel.pageControllerState.value.currentIndex
         pageVC.setViewControllers(
-            [viewControllers[initialIndex]],
+            [viewControllers[RootViewControllerType.home.rawValue]],
             direction: .forward,
             animated: false
         )
@@ -112,9 +111,9 @@ final class RootViewController: UIViewController {
     }
     
     // MARK: - Private Methods
-    private func performTransition(from oldIndex: Int, to newIndex: Int, direction: UIPageViewController.NavigationDirection) {
+    private func performTransition(from old: RootViewControllerType, to new: RootViewControllerType, direction: UIPageViewController.NavigationDirection) {
         pageVC.setViewControllers(
-            [viewControllers[newIndex]],
+            [viewControllers[new.rawValue]],
             direction: direction,
             animated: true
         )
