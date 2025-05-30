@@ -20,12 +20,18 @@ protocol RootViewModelProtocol {
 
     var pageControllerButtonStates: AnyPublisher<[PageControllerButtonState], Never> { get }
     
+    var initialSelectedTabIndex: Int { get }
+
     func didTapPageController(_ type: RootViewControllerType)
 }
 
 final class RootViewModel: RootViewModelProtocol {
 
     let model = RootModel()
+
+    var initialSelectedTabIndex: Int {
+        return model.selectedTab.rawValue
+    }
 }
 
 // MARK: - Outputs

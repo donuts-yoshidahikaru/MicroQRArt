@@ -82,7 +82,7 @@ final class RootViewController: UIViewController {
     
     private func setupInitialState() {
         pageVC.setViewControllers(
-            [viewControllers[RootViewControllerType.home.rawValue]],
+            [viewControllers[viewModel.initialSelectedTabIndex]],
             direction: .forward,
             animated: false
         )
