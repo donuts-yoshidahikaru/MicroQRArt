@@ -61,8 +61,28 @@ final class ProfileViewController: UIViewController {
 // MARK: UITableViewDelegate
 extension ProfileViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let editAction = UIContextualAction(style: .normal, title: "編集") { (_, _, completionHandler) in
-            completionHandler(true)
+        let editAction = UIContextualAction(style: .normal, title: "編集") { [weak self] (_, _, completionHandler) in
+            guard let self = self else { completionHandler(true); return }
+            // 現在のタイトルを取得
+            let currentTitle = self.viewModel.items.value[indexPath.row].title
+            let alert = UIAlertController(title: "タイトル編集", message: nil, preferredStyle: .alert)
+            alert.addTextField { textField in
+                textField.text = currentTitle
+                textField.placeholder = "新しいタイトルを入力"
+            }
+            let cancelAction = UIAlertAction(title: "キャンセル", style: .cancel) { _ in
+                completionHandler(false)
+            }
+            let okAction = UIAlertAction(title: "更新", style: .default) { [weak self] _ in
+                guard let self = self else { completionHandler(false); return }
+                if let newTitle = alert.textFields?.first?.text, !newTitle.isEmpty {
+                    self.viewModel.editTitle(at: indexPath, newTitle: newTitle)
+                }
+                completionHandler(true)
+            }
+            alert.addAction(cancelAction)
+            alert.addAction(okAction)
+            self.present(alert, animated: true, completion: nil)
         }
         editAction.backgroundColor = .systemBlue
         let deleteAction = UIContextualAction(style: .destructive, title: "削除") { [weak self] (_, _, completionHandler) in

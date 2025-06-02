@@ -28,4 +28,23 @@ final class MyQRCodeListViewModel {
         currentItems.remove(at: indexPath.row)
         items.accept(currentItems)
     }
+
+    /// 指定されたIndexPathの項目のタイトルを編集します。
+    /// - Parameters:
+    ///   - indexPath: 編集する項目のIndexPath
+    ///   - newTitle: 新しいタイトル
+    func editTitle(at indexPath: IndexPath, newTitle: String) {
+        var currentItems = items.value
+        guard indexPath.row < currentItems.count else { return }
+        let oldItem = currentItems[indexPath.row]
+        let newItem = QRCodeItem(
+            id: oldItem.id,
+            image: oldItem.image,
+            title: newTitle,
+            source: oldItem.source,
+            date: oldItem.date
+        )
+        currentItems[indexPath.row] = newItem
+        items.accept(currentItems)
+    }
 } 
