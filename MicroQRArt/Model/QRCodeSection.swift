@@ -10,9 +10,10 @@ import RxDataSources
 struct QRCodeSection {
     var header: String
     var items: [QRCodeItem]
+    var identity: String { header }
 }
 
-extension QRCodeSection: SectionModelType {
+extension QRCodeSection: AnimatableSectionModelType {
     typealias Item = QRCodeItem
 
     init(original: QRCodeSection, items: [QRCodeItem]) {

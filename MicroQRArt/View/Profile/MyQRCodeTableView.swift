@@ -30,7 +30,7 @@ class MyQRCodeTableView: UITableView {
     // MARK: - Public Methods
     func bind<Source: ObservableType>(
         source: Source,
-        dataSource: RxTableViewSectionedReloadDataSource<QRCodeSection>
+        dataSource: RxTableViewSectionedAnimatedDataSource<QRCodeSection>
     ) where Source.Element == [QRCodeSection] {
         source
             .bind(to: self.rx.items(dataSource: dataSource))
