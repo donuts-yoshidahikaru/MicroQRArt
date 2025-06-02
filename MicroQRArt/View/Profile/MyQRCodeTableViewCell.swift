@@ -7,11 +7,8 @@
 
 import UIKit
 
-/// QRコードセル（UIKit版）。
-///
-/// WHY: SwiftUIからUIKitへの移行。今後のカスタマイズ性・パフォーマンス向上のため。
 class MyQRCodeTableViewCell: UITableViewCell {
-    // MARK: - Properties
+    // MARK: - UI Components
     private let iconView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.gray.withAlphaComponent(0.2)
@@ -49,7 +46,6 @@ class MyQRCodeTableViewCell: UITableViewCell {
         contentView.addSubview(titleLabel)
         contentView.addSubview(sourceLabel)
         contentView.addSubview(dateLabel)
-        // 選択時の背景色をsubtleContentに設定
         let selectedBG = UIView()
         selectedBG.backgroundColor = UIColor.subtleContent
         selectedBackgroundView = selectedBG
@@ -60,7 +56,6 @@ class MyQRCodeTableViewCell: UITableViewCell {
     // MARK: - Layout
     override func layoutSubviews() {
         super.layoutSubviews()
-        // frameベースでレイアウト
         let paddingTop: CGFloat = 8
         let paddingLeft: CGFloat = 16
         let iconSize: CGFloat = 56
@@ -83,12 +78,12 @@ class MyQRCodeTableViewCell: UITableViewCell {
         let dateHeight = dateLabel.sizeThatFits(CGSize(width: titleWidth, height: .greatestFiniteMagnitude)).height
         dateLabel.frame = CGRect(x: titleX, y: dateY, width: titleWidth, height: dateHeight)
     }
-    // MARK: - Public API
+    // MARK: - Public Methodsa
     /// - Parameters:
     ///   - title: タイトル
     ///   - source: URL文字列
     ///   - date: 作成日
-    func configure(title: String, source: String, date: String) {
+    public func configure(title: String, source: String, date: String) {
         titleLabel.text = title
         sourceLabel.text = source
         dateLabel.text = date

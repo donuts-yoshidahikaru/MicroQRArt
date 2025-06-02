@@ -7,9 +7,6 @@
 
 import UIKit
 
-/// QRコード一覧用のUITableView。
-///
-/// WHY: ProfileViewの責務を分離し、TableViewのロジック・データを内包するため。
 class MyQRCodeTableView: UITableView {
 
     // MARK: - Properties
