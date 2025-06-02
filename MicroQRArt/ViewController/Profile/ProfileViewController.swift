@@ -6,10 +6,17 @@
 //
 
 import UIKit
+import SwiftUI
 
 final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .green
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+         let profileView = ProfileView()
+         profileView.frame = view.bounds
+         view.addSubview(profileView)
     }
 }
