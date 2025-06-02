@@ -13,14 +13,12 @@ class MyQRCodeTableViewCell: UITableViewCell {
         let view = UIView()
         view.backgroundColor = UIColor.gray.withAlphaComponent(0.2)
         view.layer.cornerRadius = 8
-        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.preferredFont(forTextStyle: .headline)
         label.textColor = .content
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     private let sourceLabel: UILabel = {
@@ -28,14 +26,12 @@ class MyQRCodeTableViewCell: UITableViewCell {
         label.font = UIFont.preferredFont(forTextStyle: .subheadline)
         label.textColor = .secondaryContent
         label.lineBreakMode = .byTruncatingTail
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     private let dateLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.preferredFont(forTextStyle: .caption1)
         label.textColor = .secondaryContent
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     // MARK: - Initialization
@@ -56,26 +52,32 @@ class MyQRCodeTableViewCell: UITableViewCell {
     // MARK: - Layout
     override func layoutSubviews() {
         super.layoutSubviews()
-        let paddingTop: CGFloat = 8
+        let paddingVertical: CGFloat = 7
         let paddingLeft: CGFloat = 16
-        let iconSize: CGFloat = 56
         let paddingRight: CGFloat = 16
         let interItemSpacing: CGFloat = 12
         let verticalSpacing: CGFloat = 4
-        // iconView
-        iconView.frame = CGRect(x: paddingLeft, y: paddingTop, width: iconSize, height: iconSize)
-        // titleLabel
-        let titleX = iconView.frame.maxX + interItemSpacing
+        let iconSize: CGFloat = self.bounds.height - paddingVertical * 2
+        let titleX = paddingLeft + iconSize + interItemSpacing
         let titleWidth = contentView.bounds.width - titleX - paddingRight
         let titleHeight = titleLabel.sizeThatFits(CGSize(width: titleWidth, height: .greatestFiniteMagnitude)).height
+        let urlY = paddingVertical
+            + titleHeight
+            + verticalSpacing
+        let urlHeight = sourceLabel.sizeThatFits(CGSize(width: titleWidth, height: .greatestFiniteMagnitude)).height
+        let dateY = paddingVertical
+            + titleHeight
+            + verticalSpacing
+            + urlHeight
+            + verticalSpacing
+        let dateHeight = dateLabel.sizeThatFits(CGSize(width: titleWidth, height: .greatestFiniteMagnitude)).height
+        // iconView
+        iconView.frame = CGRect(x: paddingLeft, y: paddingVertical, width: iconSize, height: iconSize)
+        // titleLabel
         titleLabel.frame = CGRect(x: titleX, y: iconView.frame.minY, width: titleWidth, height: titleHeight)
         // urlLabel
-        let urlY = titleLabel.frame.maxY + verticalSpacing
-        let urlHeight = sourceLabel.sizeThatFits(CGSize(width: titleWidth, height: .greatestFiniteMagnitude)).height
         sourceLabel.frame = CGRect(x: titleX, y: urlY, width: titleWidth, height: urlHeight)
         // dateLabel
-        let dateY = sourceLabel.frame.maxY + verticalSpacing
-        let dateHeight = dateLabel.sizeThatFits(CGSize(width: titleWidth, height: .greatestFiniteMagnitude)).height
         dateLabel.frame = CGRect(x: titleX, y: dateY, width: titleWidth, height: dateHeight)
     }
     // MARK: - Public Methodsa
