@@ -37,3 +37,16 @@ class MyQRCodeTableView: UITableView {
             .disposed(by: disposeBag)
     }
 }
+
+// MARK: - Configuration Structure
+struct TableViewConfiguration {
+    let rowHeight: CGFloat
+    let backgroundColor: UIColor
+    let separatorStyle: UITableViewCell.SeparatorStyle
+    
+    static let `default` = TableViewConfiguration(
+        rowHeight: 80,
+        backgroundColor: UIColor.background,
+        separatorStyle: UITableViewCell.SeparatorStyle.none
+    )
+}
