@@ -9,10 +9,11 @@ import UIKit
 
 class MyQRCodeTableViewCell: UITableViewCell {
     // MARK: - UI Components
-    private let iconView: UIView = {
-        let view = UIView()
+    private let previewImageView: UIImageView = {
+        let view = UIImageView()
         view.backgroundColor = UIColor.gray.withAlphaComponent(0.2)
         view.layer.cornerRadius = 8
+        view.tintColor = UIColor.content
         return view
     }()
     private let titleLabel: UILabel = {
@@ -38,7 +39,7 @@ class MyQRCodeTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         backgroundColor = UIColor.background
-        contentView.addSubview(iconView)
+        contentView.addSubview(previewImageView)
         contentView.addSubview(titleLabel)
         contentView.addSubview(sourceLabel)
         contentView.addSubview(dateLabel)
@@ -57,8 +58,8 @@ class MyQRCodeTableViewCell: UITableViewCell {
         let paddingRight: CGFloat = 16
         let interItemSpacing: CGFloat = 12
         let verticalSpacing: CGFloat = 4
-        let iconSize: CGFloat = self.bounds.height - paddingVertical * 2
-        let titleX = paddingLeft + iconSize + interItemSpacing
+        let previewImageSize: CGFloat = self.bounds.height - paddingVertical * 2
+        let titleX = paddingLeft + previewImageSize + interItemSpacing
         let titleWidth = contentView.bounds.width - titleX - paddingRight
         let titleHeight = titleLabel.sizeThatFits(CGSize(width: titleWidth, height: .greatestFiniteMagnitude)).height
         let urlY = paddingVertical
@@ -72,9 +73,9 @@ class MyQRCodeTableViewCell: UITableViewCell {
             + verticalSpacing
         let dateHeight = dateLabel.sizeThatFits(CGSize(width: titleWidth, height: .greatestFiniteMagnitude)).height
         // iconView
-        iconView.frame = CGRect(x: paddingLeft, y: paddingVertical, width: iconSize, height: iconSize)
+        previewImageView.frame = CGRect(x: paddingLeft, y: paddingVertical, width: previewImageSize, height: previewImageSize)
         // titleLabel
-        titleLabel.frame = CGRect(x: titleX, y: iconView.frame.minY, width: titleWidth, height: titleHeight)
+        titleLabel.frame = CGRect(x: titleX, y: previewImageView.frame.minY, width: titleWidth, height: titleHeight)
         // urlLabel
         sourceLabel.frame = CGRect(x: titleX, y: urlY, width: titleWidth, height: urlHeight)
         // dateLabel
@@ -85,9 +86,10 @@ class MyQRCodeTableViewCell: UITableViewCell {
     ///   - title: タイトル
     ///   - source: URL文字列
     ///   - date: 作成日
-    public func configure(title: String, source: String, date: String) {
+    public func configure(title: String, source: String, date: String, image: UIImage?) {
         titleLabel.text = title
         sourceLabel.text = source
         dateLabel.text = date
+        previewImageView.image = image ?? UIImage(systemName: "qrcode")
     }
 }
