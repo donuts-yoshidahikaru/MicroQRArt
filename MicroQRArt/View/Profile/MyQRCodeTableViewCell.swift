@@ -86,10 +86,10 @@ class MyQRCodeTableViewCell: UITableViewCell {
     ///   - title: タイトル
     ///   - source: URL文字列
     ///   - date: 作成日
-    public func configure(title: String, source: String, date: String, image: UIImage?) {
+    public func configure(title: String, source: String, date: String, image: Data?) {
         titleLabel.text = title
         sourceLabel.text = source
         dateLabel.text = date
-        previewImageView.image = image ?? UIImage(systemName: "qrcode")
+        previewImageView.image = UIImage(data: image ?? Data()) ?? UIImage(systemName: "qrcode")
     }
 }

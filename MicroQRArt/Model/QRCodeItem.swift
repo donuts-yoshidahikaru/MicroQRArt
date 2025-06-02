@@ -5,12 +5,12 @@
 //  Created by yoshida.hikaru on 2025/06/02.
 //
 
-import UIKit
+import Foundation
 import RxDataSources
 
 struct QRCodeItem: Identifiable, Equatable, IdentifiableType {
     let id: String
-    let image: UIImage?
+    let image: Data?
     let title: String
     let source: String
     let date: String
