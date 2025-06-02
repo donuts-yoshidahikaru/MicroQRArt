@@ -10,7 +10,7 @@ import UIKit
 class ProfileView: UIView {
 
     // MARK: - UI Components
-    private let tableView = MyQRCodeTableView(frame: .zero, style: .plain)
+    internal let tableView = MyQRCodeTableView(frame: .zero, style: .plain)
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "My QR Codes"
