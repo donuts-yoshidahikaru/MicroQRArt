@@ -48,7 +48,9 @@ extension ProfileViewController: UITableViewDelegate {
             completionHandler(true)
         }
         editAction.backgroundColor = .systemBlue
-        let deleteAction = UIContextualAction(style: .destructive, title: "削除") { (_, _, completionHandler) in
+        let deleteAction = UIContextualAction(style: .destructive, title: "削除") { [weak self] (_, _, completionHandler) in
+            guard let self = self else { return }
+            self.viewModel.deleteItem(at: indexPath)
             completionHandler(true)
         }
         let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])

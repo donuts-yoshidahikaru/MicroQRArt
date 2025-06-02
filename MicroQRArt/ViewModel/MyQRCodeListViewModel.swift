@@ -18,4 +18,14 @@ final class MyQRCodeListViewModel {
         QRCodeItem(id: "3", image: nil, title: "名刺QR", source: "https://meishi.example.com/qr/1111111111", date: "2025/05/28"),
         QRCodeItem(id: "4", image: nil, title: "イベント入場QR", source: "https://event.example.com/qr/2222222222", date: "2025/05/27")
     ])
+
+    // MARK: - Public Methods
+    /// 指定されたIndexPathの項目を削除します。
+    /// - Parameter indexPath: 削除する項目のIndexPath
+    func deleteItem(at indexPath: IndexPath) {
+        var currentItems = items.value
+        guard indexPath.row < currentItems.count else { return }
+        currentItems.remove(at: indexPath.row)
+        items.accept(currentItems)
+    }
 } 
