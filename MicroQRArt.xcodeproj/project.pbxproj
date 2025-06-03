@@ -11,6 +11,8 @@
 		7B89B7CF2DED51E600B30011 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 7B89B7CE2DED51E600B30011 /* RxRelay */; };
 		7B89B7D12DED51E600B30011 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 7B89B7D02DED51E600B30011 /* RxSwift */; };
 		7B89B7D62DED536200B30011 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = 7B89B7D52DED536200B30011 /* RxDataSources */; };
+		7B89B97B2DEEC2B300B30011 /* ReactiveCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 7B89B97A2DEEC2B300B30011 /* ReactiveCocoa */; };
+		7B89B97E2DEEC2DC00B30011 /* ReactiveSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 7B89B97D2DEEC2DC00B30011 /* ReactiveSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +75,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				7B89B7D12DED51E600B30011 /* RxSwift in Frameworks */,
+				7B89B97E2DEEC2DC00B30011 /* ReactiveSwift in Frameworks */,
+				7B89B97B2DEEC2B300B30011 /* ReactiveCocoa in Frameworks */,
 				7B89B7D62DED536200B30011 /* RxDataSources in Frameworks */,
 				7B89B7CF2DED51E600B30011 /* RxRelay in Frameworks */,
 				7B89B7CD2DED51E600B30011 /* RxCocoa in Frameworks */,
@@ -140,6 +144,8 @@
 				7B89B7CE2DED51E600B30011 /* RxRelay */,
 				7B89B7D02DED51E600B30011 /* RxSwift */,
 				7B89B7D52DED536200B30011 /* RxDataSources */,
+				7B89B97A2DEEC2B300B30011 /* ReactiveCocoa */,
+				7B89B97D2DEEC2DC00B30011 /* ReactiveSwift */,
 			);
 			productName = MicroQRArt;
 			productReference = 7BD4990A2DE69B4400F3F2AA /* MicroQRArt.app */;
@@ -226,6 +232,8 @@
 			packageReferences = (
 				7B89B7CB2DED51E600B30011 /* XCRemoteSwiftPackageReference "RxSwift" */,
 				7B89B7D42DED536200B30011 /* XCRemoteSwiftPackageReference "RxDataSources" */,
+				7B89B9792DEEC2B300B30011 /* XCRemoteSwiftPackageReference "ReactiveCocoa" */,
+				7B89B97C2DEEC2DC00B30011 /* XCRemoteSwiftPackageReference "ReactiveSwift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7BD4990B2DE69B4400F3F2AA /* Products */;
@@ -600,6 +608,22 @@
 				minimumVersion = 5.0.2;
 			};
 		};
+		7B89B9792DEEC2B300B30011 /* XCRemoteSwiftPackageReference "ReactiveCocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveCocoa/ReactiveCocoa.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.0.0;
+			};
+		};
+		7B89B97C2DEEC2DC00B30011 /* XCRemoteSwiftPackageReference "ReactiveSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveCocoa/ReactiveSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.2.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -622,6 +646,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 7B89B7D42DED536200B30011 /* XCRemoteSwiftPackageReference "RxDataSources" */;
 			productName = RxDataSources;
+		};
+		7B89B97A2DEEC2B300B30011 /* ReactiveCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7B89B9792DEEC2B300B30011 /* XCRemoteSwiftPackageReference "ReactiveCocoa" */;
+			productName = ReactiveCocoa;
+		};
+		7B89B97D2DEEC2DC00B30011 /* ReactiveSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7B89B97C2DEEC2DC00B30011 /* XCRemoteSwiftPackageReference "ReactiveSwift" */;
+			productName = ReactiveSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
