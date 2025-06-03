@@ -8,81 +8,108 @@
 import UIKit
 import ReactiveSwift
 import ReactiveCocoa
-
 final class MyQRCodeListViewModel {
+
     // MARK: - Properties
     private let model: ProfileModelProtocol
-    private let editAlertPipe = Signal<(IndexPath, String), Never>.pipe()
     private let disposables = CompositeDisposable()
+
+    // Pipes for Inputs
+    private let viewDidLoadPipe = Signal<Void, Never>.pipe()
+    private let deleteActionPipe = Signal<IndexPath, Never>.pipe()
+    private let editActionPipe = Signal<(IndexPath, String), Never>.pipe()
+    private let editAlertRequestPipe = Signal<IndexPath, Never>.pipe()
+
+    // For Outputs
+    private let _sections: Property<[QRCodeSection]>
+    private let showEditAlertPipe = Signal<(IndexPath, String), Never>.pipe() // Used for internal logic and exposed as Output
+    private let _errorMessage: Signal<String, Never>
+
 
     // MARK: - Initialization
     init(model: ProfileModelProtocol = ProfileModel()) {
         self.model = model
+
+        self._sections = Property(model.qrCodeItems.map { items in
+            [QRCodeSection(header: "", items: items)]
+        })
+        self._errorMessage = model.errorMessage
+        
+        setupBindings()
     }
-    
+
     deinit {
         disposables.dispose()
     }
 
-    // MARK: - Public Methods
-    func transform(input: Input) -> Output {
-        // ViewDidLoad処理
-        disposables += input.viewDidLoad
+    // MARK: - Private Methods
+    private func setupBindings() {
+        disposables += viewDidLoadPipe.output
             .observeValues { [weak self] in
                 self?.model.loadQRCodeItems()
             }
-        
-        // 削除処理
-        disposables += input.deleteAction
+
+        disposables += deleteActionPipe.output
             .observeValues { [weak self] indexPath in
                 self?.model.deleteQRCodeItem(at: indexPath.row)
             }
-        
-        // 編集処理
-        disposables += input.editAction
+
+        disposables += editActionPipe.output
             .observeValues { [weak self] (indexPath, newTitle) in
                 self?.model.updateQRCodeItem(at: indexPath.row, newTitle: newTitle)
             }
-        
-        // 編集アラート表示要求
-        disposables += input.editAlertRequest
+
+        disposables += editAlertRequestPipe.output
             .observeValues { [weak self] indexPath in
                 self?.handleEditAlertRequest(for: indexPath)
             }
-        
-        // QRCodeItemsをQRCodeSectionに変換
-        let sections = model.qrCodeItems
-            .map { [QRCodeSection(header: "", items: $0)] }
-        
-        return Output(
-            sections: Property(sections),
-            showEditAlert: editAlertPipe.output,
-            errorMessage: model.errorMessage
-        )
     }
 
-    // MARK: - Private Methods
     private func handleEditAlertRequest(for indexPath: IndexPath) {
         let qrCodeItems = model.qrCodeItems.value
         guard indexPath.row < qrCodeItems.count else { return }
-        
+
         let currentTitle = qrCodeItems[indexPath.row].title
-        editAlertPipe.input.send(value: (indexPath, currentTitle))
+        showEditAlertPipe.input.send(value: (indexPath, currentTitle))
     }
 }
 
-extension MyQRCodeListViewModel {
-    // MARK: - Inputs
-    struct Input {
-        let deleteAction: Signal<IndexPath, Never>
-        let editAction: Signal<(IndexPath, String), Never>
-        let viewDidLoad: Signal<Void, Never>
-        let editAlertRequest: Signal<IndexPath, Never>
+// MARK: - MyQRCodeListViewModelType
+extension MyQRCodeListViewModel: MyQRCodeListViewModelType {
+    var inputs: MyQRCodeListViewModelInputs { self }
+    var outputs: MyQRCodeListViewModelOutputs { self }
+}
+
+// MARK: - MyQRCodeListViewModelInputs
+extension MyQRCodeListViewModel: MyQRCodeListViewModelInputs {
+    var viewDidLoad: Signal<Void, Never>.Observer {
+        return viewDidLoadPipe.input
     }
-    // MARK: - Outputs
-    struct Output {
-        let sections: Property<[QRCodeSection]>
-        let showEditAlert: Signal<(IndexPath, String), Never>
-        let errorMessage: Signal<String, Never>
+
+    var deleteAction: Signal<IndexPath, Never>.Observer {
+        return deleteActionPipe.input
+    }
+
+    var editAction: Signal<(IndexPath, String), Never>.Observer {
+        return editActionPipe.input
+    }
+
+    var editAlertRequest: Signal<IndexPath, Never>.Observer {
+        return editAlertRequestPipe.input
+    }
+}
+
+// MARK: - MyQRCodeListViewModelOutputs
+extension MyQRCodeListViewModel: MyQRCodeListViewModelOutputs {
+    var sections: Property<[QRCodeSection]> {
+        return _sections
+    }
+
+    var showEditAlert: Signal<(IndexPath, String), Never> {
+        return showEditAlertPipe.output
+    }
+
+    var errorMessage: Signal<String, Never> {
+        return _errorMessage
     }
 }
