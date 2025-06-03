@@ -10,6 +10,7 @@ import ReactiveSwift
 import ReactiveCocoa
 
 final class ProfileViewController: UIViewController {
+    
     // MARK: - Properties
     private let viewModel: MyQRCodeListViewModel
     private let disposables = CompositeDisposable()
@@ -19,9 +20,10 @@ final class ProfileViewController: UIViewController {
     private let deleteActionPipe = Signal<IndexPath, Never>.pipe()
     private let editActionPipe = Signal<(IndexPath, String), Never>.pipe()
     private let viewDidLoadPipe = Signal<Void, Never>.pipe()
+    private let editAlertRequestPipe = Signal<IndexPath, Never>.pipe()
 
     // MARK: - Data Source
-    private lazy var dataSource = QRCodeTableViewDataSource(
+    private lazy var dataSource = MyQRCodeTableViewDataSource(
         animationConfig: AnimationConfiguration(
             insertAnimation: .automatic,
             deleteAnimation: .automatic,
@@ -69,12 +71,12 @@ final class ProfileViewController: UIViewController {
         let input = MyQRCodeListViewModel.Input(
             deleteAction: deleteActionPipe.output,
             editAction: editActionPipe.output,
-            viewDidLoad: viewDidLoadPipe.output
+            viewDidLoad: viewDidLoadPipe.output,
+            editAlertRequest: editAlertRequestPipe.output
         )
         
         let output = viewModel.transform(input: input)
         
-        // データバインディング - TableViewのbindメソッドを使用
         profileView.tableView.bind(source: output.sections, dataSource: dataSource)
         
         // エラーメッセージの表示
@@ -121,7 +123,7 @@ final class ProfileViewController: UIViewController {
     }
 }
 
-// MARK: UITableViewDelegate
+// MARK: - UITableViewDelegate
 extension ProfileViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
@@ -136,7 +138,7 @@ extension ProfileViewController: UITableViewDelegate {
     
     private func createEditAction(for indexPath: IndexPath) -> UIContextualAction {
         let editAction = UIContextualAction(style: .normal, title: "編集") { [weak self] (_, _, completionHandler) in
-            self?.viewModel.prepareEditAlert(for: indexPath)
+            self?.editAlertRequestPipe.input.send(value: indexPath)
             completionHandler(true)
         }
         editAction.backgroundColor = .systemBlue
