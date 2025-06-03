@@ -6,13 +6,10 @@
 //
 
 import Foundation
-import RxDataSources
-
-struct QRCodeItem: Identifiable, Equatable, IdentifiableType {
+struct QRCodeItem: Identifiable, Equatable {
     let id: String
     let image: Data?
     let title: String
     let source: String
     let date: String
-    var identity: String { id }
 } 
