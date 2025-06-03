@@ -68,28 +68,22 @@ final class ProfileViewController: UIViewController {
     }
 
     private func bindViewModel() {
-        let input = MyQRCodeListViewModel.Input(
-            deleteAction: deleteActionPipe.output,
-            editAction: editActionPipe.output,
-            viewDidLoad: viewDidLoadPipe.output,
-            editAlertRequest: editAlertRequestPipe.output
-        )
-        
-        let output = viewModel.transform(input: input)
-        
-        profileView.tableView.bind(source: output.sections, dataSource: dataSource)
-        
-        // エラーメッセージの表示
-        disposables += output.errorMessage.producer
+        disposables += viewDidLoadPipe.output.observe(viewModel.inputs.viewDidLoad)
+        disposables += deleteActionPipe.output.observe(viewModel.inputs.deleteAction)
+        disposables += editActionPipe.output.observe(viewModel.inputs.editAction)
+        disposables += editAlertRequestPipe.output.observe(viewModel.inputs.editAlertRequest)
+
+        profileView.tableView.bind(source: viewModel.outputs.sections, dataSource: dataSource)
+
+        disposables += viewModel.outputs.errorMessage
             .observe(on: UIScheduler())
-            .startWithValues { [weak self] message in
+            .observeValues { [weak self] message in
                 self?.showErrorAlert(message: message)
             }
-        
-        // 編集アラートの表示
-        disposables += output.showEditAlert.producer
+
+        disposables += viewModel.outputs.showEditAlert
             .observe(on: UIScheduler())
-            .startWithValues { [weak self] (indexPath, currentTitle) in
+            .observeValues { [weak self] (indexPath, currentTitle) in
                 self?.showEditAlert(indexPath: indexPath, currentTitle: currentTitle)
             }
     }
