@@ -43,7 +43,7 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        bindViewModel()
+        setupBind()
         viewDidLoadPipe.input.send(value: ())
     }
 
@@ -61,7 +61,7 @@ final class ProfileViewController: UIViewController {
         profileView.tableView.dataSource = dataSource
     }
 
-    private func bindViewModel() {
+    private func setupBind() {
         disposables += viewDidLoadPipe.output.observe(viewModel.inputs.viewDidLoad)
         disposables += deleteActionPipe.output.observe(viewModel.inputs.deleteAction)
         disposables += editActionPipe.output.observe(viewModel.inputs.editAction)
