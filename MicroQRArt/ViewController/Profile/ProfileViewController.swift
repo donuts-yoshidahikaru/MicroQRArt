@@ -23,13 +23,7 @@ final class ProfileViewController: UIViewController {
     private let editAlertRequestPipe = Signal<IndexPath, Never>.pipe()
 
     // MARK: - Data Source
-    private lazy var dataSource = MyQRCodeTableViewDataSource(
-        animationConfig: AnimationConfiguration(
-            insertAnimation: .automatic,
-            deleteAnimation: .automatic,
-            reloadAnimation: .automatic
-        )
-    )
+    private lazy var dataSource = MyQRCodeTableViewDataSource()
 
     // MARK: - Initialization
     init(viewModel: MyQRCodeListViewModel = MyQRCodeListViewModel()) {
