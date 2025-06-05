@@ -31,7 +31,9 @@ final class ProfileViewController: UIViewController {
     private let editAlertRequestPipe = Signal<IndexPath, Never>.pipe()
 
     // MARK: - Data Source
-    private lazy var dataSource = MyQRCodeTableViewDataSource()
+    private lazy var dataSource = MyQRCodeTableViewDataSource(
+        imageLoadingService: ImageLoadingService()
+    )
 
     // MARK: - Initialization
     init(viewModel: MyQRCodeListViewModel = MyQRCodeListViewModel()) {
@@ -67,7 +69,7 @@ final class ProfileViewController: UIViewController {
         view.addSubview(loadingIndicator)
 
         profileView.tableView.delegate = self
-        profileView.tableView.dataSource = dataSource
+        dataSource.setTableView(profileView.tableView)
     }
 
     private func setLayout() {
