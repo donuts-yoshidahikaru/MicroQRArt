@@ -35,6 +35,10 @@ class MyQRCodeTableViewCell: UITableViewCell {
         label.textColor = .secondaryContent
         return label
     }()
+
+    // MARK: - Properties
+    private var imageDownloadTask: URLSessionDataTask?
+
     // MARK: - Initialization
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -50,6 +54,14 @@ class MyQRCodeTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageDownloadTask?.cancel()
+        imageDownloadTask = nil
+        previewImageView.image = nil
+    }
+
     // MARK: - Layout
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -86,10 +98,74 @@ class MyQRCodeTableViewCell: UITableViewCell {
     ///   - title: タイトル
     ///   - source: URL文字列
     ///   - date: 作成日
-    public func configure(title: String, source: String, date: String, image: Data?) {
+    func configure(title: String, source: String, date: String, image: String?) {
         titleLabel.text = title
         sourceLabel.text = source
         dateLabel.text = date
-        previewImageView.image = UIImage(data: image ?? Data()) ?? UIImage(systemName: "qrcode")
+        
+        // Load image from URL
+        if let imageURLString = image, let imageURL = URL(string: imageURLString) {
+            loadImage(from: imageURL)
+        } else {
+            // Set default QR code placeholder
+            previewImageView.image = createPlaceholderQRImage()
+        }
+    }
+    
+    // MARK: - Image Loading
+    private func loadImage(from url: URL) {
+        // Cancel previous task
+        imageDownloadTask?.cancel()
+        
+        // Set placeholder while loading
+        previewImageView.image = createPlaceholderQRImage()
+        
+        imageDownloadTask = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+            guard let self = self,
+                  let data = data,
+                  error == nil,
+                  let image = UIImage(data: data) else {
+                DispatchQueue.main.async {
+                    self?.previewImageView.image = self?.createPlaceholderQRImage()
+                }
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self.previewImageView.image = image
+            }
+        }
+        
+        imageDownloadTask?.resume()
+    }
+    
+    private func createPlaceholderQRImage() -> UIImage? {
+        let size = CGSize(width: 56, height: 56)
+        UIGraphicsBeginImageContextWithOptions(size, false, 0)
+        defer { UIGraphicsEndImageContext() }
+        
+        // Background
+        UIColor.systemGray5.setFill()
+        UIRectFill(CGRect(origin: .zero, size: size))
+        
+        // QR pattern simulation
+        UIColor.label.setFill()
+        let patternSize: CGFloat = 4
+        
+        for row in 0..<Int(size.height / patternSize) {
+            for col in 0..<Int(size.width / patternSize) {
+                if (row + col) % 2 == 0 {
+                    let rect = CGRect(
+                        x: CGFloat(col) * patternSize,
+                        y: CGFloat(row) * patternSize,
+                        width: patternSize,
+                        height: patternSize
+                    )
+                    UIRectFill(rect)
+                }
+            }
+        }
+        
+        return UIGraphicsGetImageFromCurrentImageContext()
     }
 }
