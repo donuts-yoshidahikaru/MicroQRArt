@@ -51,15 +51,13 @@ final class ProfileModel: ProfileModelProtocol {
         loadingProperty.value = true
         
         dataRepository.fetchQRCodeItems { [weak self] result in
-            DispatchQueue.main.async {
-                self?.loadingProperty.value = false
-                
-                switch result {
-                case .success(let items):
-                    self?.itemsProperty.value = items
-                case .failure(let error):
-                    self?.errorPipe.input.send(value: "データの読み込みに失敗しました: \(error.localizedDescription)")
-                }
+            self?.loadingProperty.value = false
+            
+            switch result {
+            case .success(let items):
+                self?.itemsProperty.value = items
+            case .failure(let error):
+                self?.errorPipe.input.send(value: "データの読み込みに失敗しました: \(error.localizedDescription)")
             }
         }
     }
