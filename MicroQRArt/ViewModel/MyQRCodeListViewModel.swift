@@ -8,6 +8,7 @@
 import UIKit
 import ReactiveSwift
 import ReactiveCocoa
+
 final class MyQRCodeListViewModel {
 
     // MARK: - Properties
@@ -22,9 +23,9 @@ final class MyQRCodeListViewModel {
 
     // For Outputs
     private let _sections: Property<[QRCodeSection]>
-    private let showEditAlertPipe = Signal<(IndexPath, String), Never>.pipe() // Used for internal logic and exposed as Output
+    private let showEditAlertPipe = Signal<(IndexPath, String), Never>.pipe()
     private let _errorMessage: Signal<String, Never>
-
+    private let _isLoading: Property<Bool>
 
     // MARK: - Initialization
     init(model: ProfileModelProtocol = ProfileModel()) {
@@ -34,6 +35,7 @@ final class MyQRCodeListViewModel {
             [QRCodeSection(header: "", items: items)]
         })
         self._errorMessage = model.errorMessage
+        self._isLoading = model.isLoading
         
         setupBindings()
     }
@@ -110,6 +112,10 @@ extension MyQRCodeListViewModel: MyQRCodeListViewModelOutputs {
     }
 
     var errorMessage: Signal<String, Never> {
-        return _errorMessage
+        return model.errorMessage
+    }
+    
+    var isLoading: Property<Bool> {
+        return model.isLoading
     }
 }

@@ -6,8 +6,26 @@
 //
 
 import UIKit
+import ReactiveSwift
+import ReactiveCocoa
+
+// MARK: - Configuration
+struct QRCodeCellConfiguration {
+    let title: String
+    let source: String
+    let date: String
+    let image: Property<UIImage?>
+    
+    init(title: String, source: String, date: String, image: Property<UIImage?>) {
+        self.title = title
+        self.source = source
+        self.date = date
+        self.image = image
+    }
+}
 
 class MyQRCodeTableViewCell: UITableViewCell {
+    
     // MARK: - UI Components
     private let previewImageView: UIImageView = {
         let view = UIImageView()
@@ -35,6 +53,10 @@ class MyQRCodeTableViewCell: UITableViewCell {
         label.textColor = .secondaryContent
         return label
     }()
+
+    // MARK: - Properties
+    private let disposables = CompositeDisposable()
+
     // MARK: - Initialization
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -50,6 +72,13 @@ class MyQRCodeTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        disposables.dispose()
+        previewImageView.image = nil
+    }
+
     // MARK: - Layout
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -81,15 +110,18 @@ class MyQRCodeTableViewCell: UITableViewCell {
         // dateLabel
         dateLabel.frame = CGRect(x: titleX, y: dateY, width: titleWidth, height: dateHeight)
     }
-    // MARK: - Public Methodsa
-    /// - Parameters:
-    ///   - title: タイトル
-    ///   - source: URL文字列
-    ///   - date: 作成日
-    public func configure(title: String, source: String, date: String, image: Data?) {
-        titleLabel.text = title
-        sourceLabel.text = source
-        dateLabel.text = date
-        previewImageView.image = UIImage(data: image ?? Data()) ?? UIImage(systemName: "qrcode")
+    
+    // MARK: - Public Methods
+    func configure(with configuration: QRCodeCellConfiguration) {
+        titleLabel.text = configuration.title
+        sourceLabel.text = configuration.source
+        dateLabel.text = configuration.date
+        
+        // Bind image property to imageView
+        disposables += configuration.image.producer
+            .observe(on: UIScheduler())
+            .startWithValues { [weak self] image in
+                self?.previewImageView.image = image
+            }
     }
 }
