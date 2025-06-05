@@ -6,8 +6,26 @@
 //
 
 import UIKit
+import ReactiveSwift
+import ReactiveCocoa
+
+// MARK: - Configuration
+struct QRCodeCellConfiguration {
+    let title: String
+    let source: String
+    let date: String
+    let image: Property<UIImage?>
+    
+    init(title: String, source: String, date: String, image: Property<UIImage?>) {
+        self.title = title
+        self.source = source
+        self.date = date
+        self.image = image
+    }
+}
 
 class MyQRCodeTableViewCell: UITableViewCell {
+    
     // MARK: - UI Components
     private let previewImageView: UIImageView = {
         let view = UIImageView()
@@ -37,7 +55,7 @@ class MyQRCodeTableViewCell: UITableViewCell {
     }()
 
     // MARK: - Properties
-    private var imageDownloadTask: URLSessionDataTask?
+    private let disposables = CompositeDisposable()
 
     // MARK: - Initialization
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -57,8 +75,7 @@ class MyQRCodeTableViewCell: UITableViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        imageDownloadTask?.cancel()
-        imageDownloadTask = nil
+        disposables.dispose()
         previewImageView.image = nil
     }
 
@@ -93,79 +110,18 @@ class MyQRCodeTableViewCell: UITableViewCell {
         // dateLabel
         dateLabel.frame = CGRect(x: titleX, y: dateY, width: titleWidth, height: dateHeight)
     }
-    // MARK: - Public Methodsa
-    /// - Parameters:
-    ///   - title: タイトル
-    ///   - source: URL文字列
-    ///   - date: 作成日
-    func configure(title: String, source: String, date: String, image: String?) {
-        titleLabel.text = title
-        sourceLabel.text = source
-        dateLabel.text = date
-        
-        // Load image from URL
-        if let imageURLString = image, let imageURL = URL(string: imageURLString) {
-            loadImage(from: imageURL)
-        } else {
-            // Set default QR code placeholder
-            previewImageView.image = createPlaceholderQRImage()
-        }
-    }
     
-    // MARK: - Image Loading
-    private func loadImage(from url: URL) {
-        // Cancel previous task
-        imageDownloadTask?.cancel()
+    // MARK: - Public Methods
+    func configure(with configuration: QRCodeCellConfiguration) {
+        titleLabel.text = configuration.title
+        sourceLabel.text = configuration.source
+        dateLabel.text = configuration.date
         
-        // Set placeholder while loading
-        previewImageView.image = createPlaceholderQRImage()
-        
-        imageDownloadTask = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-            guard let self = self,
-                  let data = data,
-                  error == nil,
-                  let image = UIImage(data: data) else {
-                DispatchQueue.main.async {
-                    self?.previewImageView.image = self?.createPlaceholderQRImage()
-                }
-                return
+        // Bind image property to imageView
+        disposables += configuration.image.producer
+            .observe(on: UIScheduler())
+            .startWithValues { [weak self] image in
+                self?.previewImageView.image = image
             }
-            
-            DispatchQueue.main.async {
-                self.previewImageView.image = image
-            }
-        }
-        
-        imageDownloadTask?.resume()
-    }
-    
-    private func createPlaceholderQRImage() -> UIImage? {
-        let size = CGSize(width: 56, height: 56)
-        UIGraphicsBeginImageContextWithOptions(size, false, 0)
-        defer { UIGraphicsEndImageContext() }
-        
-        // Background
-        UIColor.systemGray5.setFill()
-        UIRectFill(CGRect(origin: .zero, size: size))
-        
-        // QR pattern simulation
-        UIColor.label.setFill()
-        let patternSize: CGFloat = 4
-        
-        for row in 0..<Int(size.height / patternSize) {
-            for col in 0..<Int(size.width / patternSize) {
-                if (row + col) % 2 == 0 {
-                    let rect = CGRect(
-                        x: CGFloat(col) * patternSize,
-                        y: CGFloat(row) * patternSize,
-                        width: patternSize,
-                        height: patternSize
-                    )
-                    UIRectFill(rect)
-                }
-            }
-        }
-        
-        return UIGraphicsGetImageFromCurrentImageContext()
     }
 }
