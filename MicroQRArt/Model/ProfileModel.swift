@@ -12,6 +12,7 @@ import ReactiveSwift
 protocol ProfileModelProtocol {
     var qrCodeItems: Property<[QRCodeItem]> { get }
     var errorMessage: Signal<String, Never> { get }
+    var isLoading: Property<Bool> { get }
     
     func loadQRCodeItems()
     func deleteQRCodeItem(at index: Int)
@@ -24,6 +25,7 @@ final class ProfileModel: ProfileModelProtocol {
     // MARK: - Properties
     private let itemsProperty = MutableProperty<[QRCodeItem]>([])
     private let errorPipe = Signal<String, Never>.pipe()
+    private let loadingProperty = MutableProperty<Bool>(false)
     private let dataRepository: QRCodeRepositoryProtocol
     
     // MARK: - Outputs
@@ -35,6 +37,10 @@ final class ProfileModel: ProfileModelProtocol {
         return errorPipe.output
     }
     
+    var isLoading: Property<Bool> {
+        return Property(loadingProperty)
+    }
+    
     // MARK: - Initialization
     init(dataRepository: QRCodeRepositoryProtocol = QRCodeRepository()) {
         self.dataRepository = dataRepository
@@ -42,11 +48,19 @@ final class ProfileModel: ProfileModelProtocol {
     
     // MARK: - Public Methods
     func loadQRCodeItems() {
-        do {
-            let items = try dataRepository.fetchQRCodeItems()
-            itemsProperty.value = items
-        } catch {
-            errorPipe.input.send(value: "データの読み込みに失敗しました: \(error.localizedDescription)")
+        loadingProperty.value = true
+        
+        dataRepository.fetchQRCodeItems { [weak self] result in
+            DispatchQueue.main.async {
+                self?.loadingProperty.value = false
+                
+                switch result {
+                case .success(let items):
+                    self?.itemsProperty.value = items
+                case .failure(let error):
+                    self?.errorPipe.input.send(value: "データの読み込みに失敗しました: \(error.localizedDescription)")
+                }
+            }
         }
     }
     
@@ -103,20 +117,54 @@ final class ProfileModel: ProfileModelProtocol {
 
 // MARK: - Protocol
 protocol QRCodeRepositoryProtocol {
-    func fetchQRCodeItems() throws -> [QRCodeItem]
+    func fetchQRCodeItems(completion: @escaping (Result<[QRCodeItem], Error>) -> Void)
     func deleteQRCodeItem(id: String) throws
     func updateQRCodeItem(_ item: QRCodeItem) throws
 }
 
 // MARK: - Repository
 final class QRCodeRepository: QRCodeRepositoryProtocol {
-    func fetchQRCodeItems() throws -> [QRCodeItem] {
-        return [
-            QRCodeItem(id: "1", image: nil, title: "自宅Wi-Fi", source: "https://wifi.example.com/qr/1234567890", date: "2025/05/30"),
-            QRCodeItem(id: "2", image: nil, title: "会社Wi-Fi", source: "https://wifi.example.com/qr/0987654321", date: "2025/05/29"),
-            QRCodeItem(id: "3", image: nil, title: "名刺QR", source: "https://meishi.example.com/qr/1111111111", date: "2025/05/28"),
-            QRCodeItem(id: "4", image: nil, title: "イベント入場QR", source: "https://event.example.com/qr/2222222222", date: "2025/05/27")
-        ]
+    
+    private let apiEndpoint = "https://s-5.app/micro_qr_art/list"
+    
+    func fetchQRCodeItems(completion: @escaping (Result<[QRCodeItem], Error>) -> Void) {
+        guard let url = URL(string: apiEndpoint) else {
+            // インジケータのデバック用に3秒のディレイを追加
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                completion(.failure(APIError.invalidURL))
+            }
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+                
+                guard let data = data else {
+                    completion(.failure(APIError.noData))
+                    return
+                }
+                
+                do {
+                    let apiResponse = try JSONDecoder().decode(QRCodeAPIResponse.self, from: data)
+                    
+                    if apiResponse.result == "ok" {
+                        completion(.success(apiResponse.data))
+                    } else {
+                        completion(.failure(APIError.serverError))
+                    }
+                } catch {
+                    completion(.failure(error))
+                }
+            }
+        }.resume()
     }
     
     func deleteQRCodeItem(id: String) throws {
@@ -125,5 +173,23 @@ final class QRCodeRepository: QRCodeRepositoryProtocol {
     
     func updateQRCodeItem(_ item: QRCodeItem) throws {
         print("Updating item: \(item)")
+    }
+}
+
+// MARK: - API Error
+enum APIError: Error {
+    case invalidURL
+    case noData
+    case serverError
+    
+    var localizedDescription: String {
+        switch self {
+        case .invalidURL:
+            return "無効なURLです"
+        case .noData:
+            return "データが取得できませんでした"
+        case .serverError:
+            return "サーバーエラーが発生しました"
+        }
     }
 }
