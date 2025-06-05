@@ -21,6 +21,7 @@ protocol MyQRCodeListViewModelOutputs {
     var sections: Property<[QRCodeSection]> { get }
     var showEditAlert: Signal<(IndexPath, String), Never> { get }
     var errorMessage: Signal<String, Never> { get }
+    var isLoading: Property<Bool> { get }
 }
 
 // MARK: - Type
