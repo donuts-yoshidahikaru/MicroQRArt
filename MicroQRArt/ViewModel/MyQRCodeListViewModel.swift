@@ -112,10 +112,10 @@ extension MyQRCodeListViewModel: MyQRCodeListViewModelOutputs {
     }
 
     var errorMessage: Signal<String, Never> {
-        return _errorMessage
+        return model.errorMessage
     }
     
     var isLoading: Property<Bool> {
-        return _isLoading
+        return model.isLoading
     }
 }
