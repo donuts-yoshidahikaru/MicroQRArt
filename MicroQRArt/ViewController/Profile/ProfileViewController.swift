@@ -15,6 +15,14 @@ final class ProfileViewController: UIViewController {
     private let viewModel: MyQRCodeListViewModel
     private let disposables = CompositeDisposable()
     private let profileView = ProfileView()
+    
+    // Loading Indicator
+    private let loadingIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.color = .secondaryContent
+        indicator.hidesWhenStopped = true
+        return indicator
+    }()
 
     // MARK: - Reactive Properties
     private let deleteActionPipe = Signal<IndexPath, Never>.pipe()
@@ -44,29 +52,44 @@ final class ProfileViewController: UIViewController {
         super.viewDidLoad()
         setupView()
         setupBind()
+        setLayout()
         viewDidLoadPipe.input.send(value: ())
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        profileView.frame = view.bounds
+        setLayout()
     }
 
     // MARK: - Setup
     private func setupView() {
-        profileView.frame = view.bounds
         view.addSubview(profileView)
-        
+        view.addSubview(loadingIndicator)
+
         profileView.tableView.delegate = self
         profileView.tableView.dataSource = dataSource
     }
 
+    private func setLayout() {
+        let indicatorSize = loadingIndicator.bounds.size
+        loadingIndicator.frame = CGRect(
+            x: (view.bounds.width - indicatorSize.width) / 2,
+            y: (view.bounds.height - indicatorSize.height) / 2,
+            width: indicatorSize.width,
+            height: indicatorSize.height
+        )
+
+        profileView.frame = view.bounds
+    }
+
     private func setupBind() {
+        // Inputs
         disposables += viewDidLoadPipe.output.observe(viewModel.inputs.viewDidLoad)
         disposables += deleteActionPipe.output.observe(viewModel.inputs.deleteAction)
         disposables += editActionPipe.output.observe(viewModel.inputs.editAction)
         disposables += editAlertRequestPipe.output.observe(viewModel.inputs.editAlertRequest)
 
+        // Outputs
         profileView.tableView.bind(source: viewModel.outputs.sections, dataSource: dataSource)
 
         disposables += viewModel.outputs.errorMessage
@@ -79,6 +102,20 @@ final class ProfileViewController: UIViewController {
             .observe(on: UIScheduler())
             .observeValues { [weak self] (indexPath, currentTitle) in
                 self?.showEditAlert(indexPath: indexPath, currentTitle: currentTitle)
+            }
+        
+        // Loading State
+        disposables += viewModel.outputs.isLoading
+            .producer
+            .observe(on: UIScheduler())
+            .startWithValues { [weak self] isLoading in
+                if isLoading {
+                    self?.loadingIndicator.startAnimating()
+                    self?.profileView.tableView.alpha = 0.5
+                } else {
+                    self?.loadingIndicator.stopAnimating()
+                    self?.profileView.tableView.alpha = 1.0
+                }
             }
     }
     
